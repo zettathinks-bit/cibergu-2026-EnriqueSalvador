@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ZettaVio | Asistente de Movilidad Urbana</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <img src="./ZettaVio_b.png" alt="ZettaVio" class="app-logo">
+        </header>
+
+        <main>
+            <div class="mic-container">
+                <button id="mic-btn" class="mic-button" aria-label="Hablar con ZettaVio">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+                        <line x1="12" y1="19" x2="12" y2="22"></line>
+                    </svg>
+                </button>
+                <div class="pulse-ring"></div>
+                <div class="pulse-ring delay"></div>
+            </div>
+
+            <div class="feedback-panel">
+                <p id="transcription-text" class="placeholder">Toca el círculo y di "Parada 101" o "¿Dónde estoy?"</p>
+            </div>
+
+            <!-- PANEL DE RESULTADOS -->
+            <div id="arrivals-list" class="arrivals-container">
+                <p class="initial-msg">Dime un número de parada para empezar.</p>
+            </div>
+        </main>
+
+        <footer>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>

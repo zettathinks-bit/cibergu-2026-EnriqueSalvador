@@ -1,0 +1,318 @@
+/* 
+  ZettaVio Mobility Assistant - Frontend V2.0
+  Diseño centrado en el botón mic - Solo accesibilidad
+*/
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background: #0a0e1a;
+    color: #e0e8ff;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    padding: 1rem;
+}
+
+/* ---- HEADER ---- */
+/* ---- HEADER ---- */
+header {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+/* POR DEFECTO (Móvil): Esquina superior izquierda */
+.app-logo {
+    max-width: 160px;
+    height: auto;
+    filter: drop-shadow(0 0 8px rgba(79, 142, 247, 0.2));
+    margin-left: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+/* VERSIÓN ORDENADOR: Centrado y más grande */
+@media (min-width: 768px) {
+    header {
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 3rem;
+    }
+    .app-logo {
+        max-width: 380px; /* Más grande en ordenador */
+        margin: 0 auto;
+        display: block;
+        filter: drop-shadow(0 0 20px rgba(79, 142, 247, 0.4));
+    }
+}
+
+body.emergency-mode {
+    background: radial-gradient(circle at center, #1e293b 0%, #450a0a 100%);
+    animation: pulse-sos 2s infinite;
+}
+
+@keyframes pulse-sos {
+    0% { background-color: #0f172a; }
+    50% { background-color: #450a0a; }
+    100% { background-color: #0f172a; }
+}
+
+.status {
+    display: inline-block;
+    margin-top: 0.5rem;
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+}
+
+.status.online {
+    background: rgba(34, 197, 94, 0.15);
+    color: #22c55e;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+/* ---- MAIN ---- */
+main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    padding: 1rem;
+}
+
+/* ---- MIC BUTTON (el centro de la app) ---- */
+.mic-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Mucho más grande que antes */
+    width: min(72vw, 280px);
+    height: min(72vw, 280px);
+}
+
+.mic-button {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: radial-gradient(circle at 35% 35%, #4f8ef7, #1a3a8f);
+    box-shadow:
+        0 0 0 6px rgba(79, 142, 247, 0.15),
+        0 0 40px rgba(79, 142, 247, 0.4),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.mic-button svg {
+    width: 40%;
+    height: 40%;
+    color: #fff;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3));
+}
+
+.mic-button:active {
+    transform: scale(0.93);
+    box-shadow:
+        0 0 0 8px rgba(79, 142, 247, 0.25),
+        0 0 60px rgba(79, 142, 247, 0.6),
+        0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Estado activo escuchando */
+.mic-button.mic-active {
+    background: radial-gradient(circle at 35% 35%, #f43f5e, #9f1239);
+    box-shadow:
+        0 0 0 8px rgba(244, 63, 94, 0.25),
+        0 0 60px rgba(244, 63, 94, 0.5),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: mic-pulse-glow 1s ease-in-out infinite;
+}
+
+/* ESTADO NAVEGACIÓN (BRÚJULA) */
+.mic-button.nav-active {
+    background: radial-gradient(circle at 35% 35%, #06b6d4, #083344); /* Cian / Petróleo */
+    box-shadow:
+        0 0 0 8px rgba(6, 182, 212, 0.25),
+        0 0 60px rgba(6, 182, 212, 0.4),
+        0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.mic-button.nav-active svg {
+    animation: compass-spin 4s ease-in-out infinite alternate;
+}
+
+@keyframes compass-spin {
+    0% { transform: rotate(-15deg); }
+    100% { transform: rotate(15deg); }
+}
+
+@keyframes sos-shake {
+    from { transform: scale(1); filter: brightness(1); }
+    to { transform: scale(1.1); filter: brightness(1.5); }
+}
+
+@keyframes mic-pulse-glow {
+    0%, 100% { box-shadow: 0 0 0 8px rgba(244,63,94,0.25), 0 0 60px rgba(244,63,94,0.5), 0 20px 60px rgba(0,0,0,0.5); }
+    50% { box-shadow: 0 0 0 18px rgba(244,63,94,0.1), 0 0 80px rgba(244,63,94,0.7), 0 20px 60px rgba(0,0,0,0.5); }
+}
+
+/* Anillos de pulso */
+.pulse-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    border: 2px solid rgba(79, 142, 247, 0.25);
+    animation: pulse-expand 2.5s ease-out infinite;
+    pointer-events: none;
+}
+
+.pulse-ring.delay {
+    animation-delay: 1.2s;
+    border-color: rgba(167, 139, 250, 0.2);
+}
+
+@keyframes pulse-expand {
+    0% { transform: scale(1); opacity: 0.6; }
+    100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* ---- FEEDBACK ---- */
+.feedback-panel {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+}
+
+#transcription-text {
+    font-size: 1rem;
+    color: #94a3b8;
+    font-style: italic;
+    min-height: 1.5em;
+    line-height: 1.5;
+    transition: color 0.3s;
+}
+
+#transcription-text:not(.placeholder) {
+    color: #e0e8ff;
+    font-style: normal;
+    font-weight: 500;
+}
+
+/* ---- ARRIVALS ---- */
+.arrivals-container {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+}
+
+.initial-msg, .no-data {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    padding: 2.5rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px dashed rgba(79, 142, 247, 0.2);
+    border-radius: 20px;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.no-data::before {
+    content: "📭";
+    display: block;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.bus-card {
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(79, 142, 247, 0.2);
+    border-radius: 16px;
+    padding: 0.8rem;
+    display: grid;
+    /* Ajuste de columnas: el tiempo tiene un hueco fijo de 100px */
+    grid-template-columns: 55px 1fr 90px;
+    align-items: center;
+    gap: 0.6rem;
+    animation: card-in 0.3s ease-out forwards;
+    overflow: hidden;
+}
+
+@keyframes card-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.line-badge {
+    background: linear-gradient(135deg, #4f8ef7, #a78bfa);
+    color: #fff;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: center;
+    padding: 0.4rem 0.6rem;
+    border-radius: 10px;
+}
+
+.itinerary {
+    font-size: 0.8rem;
+    color: #94a3b8;
+    line-height: 1.2;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Máximo 2 líneas para el itinerario */
+    -webkit-box-orient: vertical;
+}
+
+.arrival-time {
+    font-size: 0.95rem; /* Fuente más pequeña para seguridad */
+    font-weight: 800;
+    color: #60a5fa;
+    text-align: right;
+    line-height: 1;
+    word-break: break-word; /* Si no cabe, corta la palabra */
+    white-space: normal;  /* Permite saltar de línea */
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.loading-spinner {
+    width: 28px;
+    height: 28px;
+    border: 3px solid rgba(79,142,247,0.2);
+    border-top-color: #4f8ef7;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 0.5rem;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+footer { padding: 0.5rem; }

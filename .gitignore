@@ -1,0 +1,21 @@
+# Entornos virtuales
+venv/
+venvOLD/
+.venv/
+__pycache__/
+*.pyc
+
+# Ejecutables y binarios
+ngrok.exe
+*.exe
+*.bin
+
+# Secretos (si decides usarlos)
+.env
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Datos temporales
+/tmp/
