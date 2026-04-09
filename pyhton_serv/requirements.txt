@@ -1,7 +1,7 @@
 fastapi
 uvicorn
+requests
 mysql-connector-python
 playwright
-requests
+python-dotenv
 pydantic
-python-multipart

@@ -11,6 +11,7 @@ import asyncio
 from typing import Optional, List
 from pydantic import BaseModel
 from fastapi import FastAPI, HTTPException, Query, Header, Request
+from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
@@ -21,17 +22,21 @@ import hashlib
 # Inserción de ruta para módulos core
 sys.path.insert(0, os.path.dirname(__file__))
 
+# Cargar configuración desde .env
+load_dotenv()
+
 app = FastAPI(
     title="Zetta Vío (CarePing) API",
     description="Asistente de movilidad y seguridad urbana Guadalajara",
     version="2.1.0"
 )
 
-# Configuración CiberGu (CarePing)
-TELEGRAM_TOKEN = "8725218396:AAG4WDPdCkB3szsy9sa1H-2PorhktrwJDtI"
-TELEGRAM_CHAT_ID = "1199468736"
-SHARED_SECRET = "zettavio-secret-2026"
-GOOGLE_MAPS_API_KEY = "AIzaSyBBrJtVgXvede-ROoMxQKOFpP4ByfZCDXM"
+# --- CONFIGURACIÓN CRÍTICA (RETO CIBERGU) ---
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "8725218396:AAG4WDPdCkB3szsy9sa1H-2PorhktrwJDtI")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-4778135891")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "AIzaSyBBrJtVgXvede-ROoMxQKOFpP4ByfZCDXM")
+SHARED_SECRET = os.getenv("SHARED_SECRET", "zettavio-secret-2026")
+# --------------------------------------------
 
 # --- SISTEMA DE CACHÉ Y CONCURRENCIA ---
 bus_cache = {}
