@@ -1,6 +1,6 @@
 # 🧭 Zetta Vío: Movilidad Inteligente y Seguridad Ciudadana
 
-![ZettaVio Logo](webapp/Zettavio_b.png)
+![ZettaVio Logo](webapp/ZettaVio_b.png)
 
 **Zetta Vío** es un asistente de movilidad inclusiva diseñado para el reto **CiberGu 2026**. Nuestra misión es transformar la experiencia de transporte público en Guadalajara, ofreciendo una herramienta potente, humana y segura para personas con discapacidad visual y ciudadanos en general.
 
