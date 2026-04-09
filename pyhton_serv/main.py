@@ -32,10 +32,10 @@ app = FastAPI(
 )
 
 # --- CONFIGURACIÓN CRÍTICA (RETO CIBERGU) ---
-TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN", "8725218396:AAG4WDPdCkB3szsy9sa1H-2PorhktrwJDtI")
-TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID", "-4778135891")
-GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY", "AIzaSyBBrJtVgXvede-ROoMxQKOFpP4ByfZCDXM")
-SHARED_SECRET = os.getenv("SHARED_SECRET", "zettavio-secret-2026")
+TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+GOOGLE_MAPS_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+SHARED_SECRET = os.getenv("SHARED_SECRET")
 # --------------------------------------------
 
 # --- SISTEMA DE CACHÉ Y CONCURRENCIA ---
@@ -74,8 +74,10 @@ def get_address_google(lat, lon):
         data = r.json()
         if data["status"] == "OK":
             # La primera dirección suele ser la más precisa (Calle + Número)
-            return data["results"][0]["formatted_address"]
-        return "Dirección no disponible por Google"
+            raw_address = data["results"][0]["formatted_address"]
+            # Limpiar para voz humana
+            return clean_for_voice(raw_address)
+        return "Ubicación desconocida"
     except Exception as e:
         print(f"❌ Error en Google Maps: {e}")
         return "Error al consultar Google Maps"
@@ -118,12 +120,20 @@ def get_walking_instructions(origin_lat, origin_lon, dest_lat, dest_lon):
             for s in steps:
                 text = s.get("navigationInstruction", {}).get("instructions", "")
                 if text:
-                    # Limpieza para voz (Expandir abreviaturas)
-                    text = re.sub(r'\bC\./\b|\bC/\b|\bC\.\s?\b', 'Calle ', text)
-                    text = re.sub(r'\bAv\.\b', 'Avenida ', text)
-                    text = re.sub(r'\bPz\.\b|\bPza\.\b', 'Plaza ', text)
-                    text = re.sub(r'\bctra\.\b', 'carretera ', text, flags=re.IGNORECASE)
+                    # Limpieza para voz humana
+                    # Buscamos todas las variantes de "C." al inicio o después de un espacio
+                    reemplazos = {
+                        "C. ": "Calle ", "C/ ": "Calle ", "C./ ": "Calle ",
+                        "c. ": "Calle ", "c/ ": "Calle ",
+                        "Av. ": "Avenida ", "av. ": "Avenida ",
+                        "Pza. ": "Plaza ", "Pz. ": "Plaza ",
+                        "Ctra. ": "Carretera ", "ctra. ": "Carretera "
+                    }
+                    for ori, rep in reemplazos.items():
+                        text = text.replace(ori, rep)
                     
+                    # Eliminar HTML sutil que Maps a veces mete (si existiera)
+                    text = re.sub(r'<[^>]+>', '', text)
                     text = text.replace("  ", " ").strip()
                     instrucciones.append(text)
             return instrucciones
@@ -173,29 +183,17 @@ import mysql.connector
 DIMINUTIVOS = {
     r"FcoAritio": "Francisco Aritio",
     r"Fco Aritio": "Francisco Aritio",
-    r"Pº": "Paseo ",
-    r"Pz": "Plaza ",
-    r"Gta": "Glorieta ",
-    r"ConArenal": "Concepción Arenal",
-    r"AguasVivas": "Aguas Vivas",
-    r"RENFE": "Estación Renfe",
-    r"CriColon": "Cristóbal Colón",
-    r"FcoPizarro": "Francisco Pizarro",
-    r"S.Isidro": "San Isidro",
-    r"S.Gines": "San Ginés",
-    r"MPinilla": "Mariano Pinilla",
-    r"EduGuitian": "Eduardo Guitián",
-    r"Pq": "Parque ",
-    r"Ctra": "Carretera ",
-    r"Fdez.Iparraguirre": "Fernández Iparraguirre",
-    r"Cifuentes": "Calle Cifuentes",
-    r"Besteiro": "Calle Capitán Boixareu Rivera",
-    r"Casas Rio": "Casas del Río",
-    r"PzCaidos": "Plaza de los Caídos",
-    r"ant": "antiguo",
-    r"DES": "después",
-    r"ANT": "antes",
-    r"frte": "frente"
+    r"Pº": "Paseo ", "Pz": "Plaza ", "Gta": "Glorieta ",
+    r"Pza": "Plaza ", "Av\.": "Avenida ", "C\.": "Calle ", "C/": "Calle ",
+    r"ConArenal": "Concepción Arenal", "AguasVivas": "Aguas Vivas",
+    r"RENFE": "Estación Renfe", "CriColon": "Cristóbal Colón",
+    r"FcoPizarro": "Francisco Pizarro", "S\.Isidro": "San Isidro",
+    r"S\.Gines": "San Ginés", "MPinilla": "Mariano Pinilla",
+    r"EduGuitian": "Eduardo Guitián", "Pq": "Parque ",
+    r"Ctra": "Carretera ", "Fdez\.Iparraguirre": "Fernández Iparraguirre",
+    r"Cifuentes": "Calle Cifuentes", "Besteiro": "Calle Capitán Boixareu Rivera",
+    r"Casas Rio": "Casas del Río", "PzCaidos": "Plaza de los Caídos",
+    r"ant": "antiguo", "DES": "después", "ANT": "antes", "frte": "frente"
 }
 
 def clean_for_voice(text: str) -> str:
